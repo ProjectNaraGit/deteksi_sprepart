@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifikasi Spare Part Honda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #dc3545 0%, #8b0000 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        
+        .check-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid #dc3545;
+            margin-bottom: 30px;
+        }
+        
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            border: none;
+            padding: 12px 20px;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: #dc3545;
+            font-weight: bold;
+            border-bottom: 3px solid #dc3545;
+            background: transparent;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            border: none;
+            color: #dc3545;
+        }
+        
+        #qr-reader {
+            border: 2px dashed #dc3545;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .history-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .history-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .share-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+        
+        .share-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .btn-whatsapp { background: #25D366; }
+        .btn-facebook { background: #1877F2; }
+        .btn-twitter { background: #1DA1F2; }
+        .btn-copy { background: #6c757d; }
+        
+        .result-box {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            display: none;
+        }
+        
+        .result-box.authentic {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+        }
+        
+        .result-box.fake {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="check-container">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <i class="bi bi-shield-check text-danger" style="font-size: 4rem;"></i>
+                <h2 class="mb-2">Verifikasi Keaslian</h2>
+                <h4 class="text-danger mb-3">Spare Part Honda</h4>
+            </div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#input-tab">
+                        <i class="bi bi-keyboard"></i> Input Manual
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#qr-tab">
+                        <i class="bi bi-qr-code-scan"></i> Scan QR
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#history-tab" onclick="loadHistory()">
+                        <i class="bi bi-clock-history"></i> Riwayat
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content">
+                <!-- Input Manual Tab -->
+                <div class="tab-pane fade show active" id="input-tab">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Kode Part Spare Part</label>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-danger text-white">
+                                <i class="bi bi-upc-scan"></i>
+                            </span>
+                            <input type="text" 
+                                   id="kodePartInput" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Contoh: 13101-KVB-900"
+                                   autocomplete="off">
+                        </div>
+                        <div id="autocomplete-list" class="list-group"></div>
+                    </div>
+
+                    <button onclick="verifyPart()" class="btn btn-danger btn-lg w-100 mb-3">
+                        <i class="bi bi-search"></i> Verifikasi Sekarang
+                    </button>
+                </div>
+
+                <!-- QR Scanner Tab -->
+                <div class="tab-pane fade" id="qr-tab">
+                    <div id="qr-reader" style="width: 100%; display: none;"></div>
+                    <div class="text-center">
+                        <button id="start-scan-btn" onclick="startQRScanner()" class="btn btn-danger btn-lg">
+                            <i class="bi bi-camera"></i> Mulai Scan
+                        </button>
+                        <button id="stop-scan-btn" onclick="stopQRScanner()" class="btn btn-secondary btn-lg" style="display: none;">
+                            <i class="bi bi-stop-circle"></i> Stop Scan
+                        </button>
+                        <p class="text-muted mt-3">
+                            Arahkan camera ke QR code pada spare part atau kemasan
+                        </p>
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div class="tab-pane fade" id="history-tab">
+                    <div id="history-container">
+                        <div class="text-center text-muted">
+                            <i class="bi bi-clock-history" style="font-size: 3rem;"></i>
+                            <p>Belum ada riwayat verifikasi</p>
+                        </div>
+                    </div>
+                    <button onclick="clearHistory()" class="btn btn-outline-danger w-100 mt-3">
+                        <i class="bi bi-trash"></i> Hapus Semua Riwayat
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Box -->
+            <div class="result-box" id="result-box">
+                <div class="text-center">
+                    <i id="result-icon"></i>
+                    <h4 id="result-title"></h4>
+                    <p id="result-message"></p>
+                </div>
+
+                <div id="result-details"></div>
+
+                <!-- Share Buttons -->
+                <div class="share-buttons" id="share-buttons" style="display: none;">
+                    <button class="share-btn btn-whatsapp" onclick="shareWhatsApp()" title="Share ke WhatsApp">
+                        <i class="bi bi-whatsapp"></i>
+                    </button>
+                    <button class="share-btn btn-facebook" onclick="shareFacebook()" title="Share ke Facebook">
+                        <i class="bi bi-facebook"></i>
+                    </button>
+                    <button class="share-btn btn-twitter" onclick="shareTwitter()" title="Share ke Twitter">
+                        <i class="bi bi-twitter"></i>
+                    </button>
+                    <button class="share-btn btn-copy" onclick="copyLink()" title="Copy Link">
+                        <i class="bi bi-link-45deg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Back Button -->
+            <div class="text-center mt-4">
+                <a href="/" class="text-decoration-none text-muted">
+                    <i class="bi bi-arrow-left"></i> Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script>
+        let html5QrCode;
+        let currentResult = null;
+
+        // Autocomplete
+        document.getElementById('kodePartInput').addEventListener('input', async function(e) {
+            const value = this.value;
+            const list = document.getElementById('autocomplete-list');
+            list.innerHTML = '';
+            
+            if (value.length < 2) return;
+
+            try {
+                const response = await fetch(`/api/search?q=${encodeURIComponent(value)}`);
+                const data = await response.json();
+                
+                data.forEach(item => {
+                    const div = document.createElement('button');
+                    div.className = 'list-group-item list-group-item-action';
+                    div.innerHTML = `
+                        <strong>${item.kode_part}</strong><br>
+                        <small class="text-muted">${item.nama_part} - ${item.model_motor}</small>
+                    `;
+                    div.onclick = () => {
+                        document.getElementById('kodePartInput').value = item.kode_part;
+                        list.innerHTML = '';
+                    };
+                    list.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // Verify Part
+        async function verifyPart() {
+            const kodePart = document.getElementById('kodePartInput').value.trim();
+            
+            if (!kodePart) {
+                showToast('danger', 'Masukkan kode part terlebih dahulu!');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ kode_part: kodePart })
+                });
+
+                const result = await response.json();
+                currentResult = result;
+                
+                showResult(result);
+                saveToHistory(result);
+            } catch (error) {
+                showToast('danger', 'Gagal verifikasi. Coba lagi!');
+            }
+        }
+
+        // QR Scanner
+        function startQRScanner() {
+            const readerElement = document.getElementById('qr-reader');
+            readerElement.style.display = 'block';
+            document.getElementById('start-scan-btn').style.display = 'none';
+            document.getElementById('stop-scan-btn').style.display = 'inline-block';
+
+            html5QrCode = new Html5Qrcode("qr-reader");
+            
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                (decodedText) => {
+                    document.getElementById('kodePartInput').value = decodedText;
+                    stopQRScanner();
+                    
+                    // Auto verify
+                    setTimeout(() => {
+                        document.querySelector('[data-bs-target="#input-tab"]').click();
+                        verifyPart();
+                    }, 500);
+                }
+            ).catch(err => {
+                showToast('danger', 'Tidak bisa akses camera: ' + err);
+                stopQRScanner();
+            });
+        }
+
+        function stopQRScanner() {
+            if (html5QrCode) {
+                html5QrCode.stop();
+                document.getElementById('qr-reader').style.display = 'none';
+                document.getElementById('start-scan-btn').style.display = 'inline-block';
+                document.getElementById('stop-scan-btn').style.display = 'none';
+            }
+        }
+
+        // Show Result
+        function showResult(data) {
+            const resultBox = document.getElementById('result-box');
+            const resultIcon = document.getElementById('result-icon');
+            const resultTitle = document.getElementById('result-title');
+            const resultMessage = document.getElementById('result-message');
+            const resultDetails = document.getElementById('result-details');
+            const shareButtons = document.getElementById('share-buttons');
+
+            resultBox.className = 'result-box';
+            
+            if (data.authentic) {
+                resultBox.classList.add('authentic');
+                resultIcon.className = 'bi bi-check-circle-fill text-success';
+                resultIcon.style.fontSize = '4rem';
+                resultTitle.textContent = 'SPARE PART ASLI ✓';
+                resultTitle.className = 'text-success';
+                resultMessage.textContent = data.message;
+
+                resultDetails.innerHTML = `
+                    <table class="table table-borderless mb-0">
+                        <tr>
+                            <th width="40%">Kode Part:</th>
+                            <td><strong>${data.data.kode_part}</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Nama Part:</th>
+                            <td>${data.data.nama_part}</td>
+                        </tr>
+                        <tr>
+                            <th>Kategori:</th>
+                            <td>${data.data.kategori}</td>
+                        </tr>
+                        <tr>
+                            <th>Model Motor:</th>
+                            <td>${data.data.model_motor}</td>
+                        </tr>
+                        <tr>
+                            <th>Harga:</th>
+                            <td class="text-danger fw-bold">${data.data.harga}</td>
+                        </tr>
+                    </table>
+                `;
+                
+                shareButtons.style.display = 'flex';
+            } else {
+                resultBox.classList.add('fake');
+                resultIcon.className = 'bi bi-x-circle-fill text-danger';
+                resultIcon.style.fontSize = '4rem';
+                resultTitle.textContent = 'SPARE PART TIDAK DITEMUKAN ✗';
+                resultTitle.className = 'text-danger';
+                resultMessage.textContent = data.message;
+                resultDetails.innerHTML = '';
+                shareButtons.style.display = 'none';
+            }
+
+            resultBox.style.display = 'block';
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // History Functions
+        function saveToHistory(data) {
+            let history = JSON.parse(localStorage.getItem('verification_history') || '[]');
+            
+            history.unshift({
+                kode_part: data.data ? data.data.kode_part : 'Unknown',
+                nama_part: data.data ? data.data.nama_part : 'Tidak ditemukan',
+                status: data.authentic ? 'ASLI' : 'TIDAK VALID',
+                timestamp: new Date().toISOString(),
+                data: data.data
+            });
+            
+            // Keep only last 20
+            history = history.slice(0, 20);
+            localStorage.setItem('verification_history', JSON.stringify(history));
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('verification_history') || '[]');
+            const container = document.getElementById('history-container');
+            
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-muted">
+                        <i class="bi bi-clock-history" style="font-size: 3rem;"></i>
+                        <p>Belum ada riwayat verifikasi</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = history.map((item, index) => `
+                <div class="history-item" onclick='useHistoryItem(${JSON.stringify(item)})'>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${item.kode_part}</strong>
+                            <br>
+                            <small class="text-muted">${item.nama_part}</small>
+                        </div>
+                        <span class="badge ${item.status === 'ASLI' ? 'bg-success' : 'bg-danger'}">
+                            ${item.status}
+                        </span>
+                    </div>
+                    <small class="text-muted">
+                        <i class="bi bi-clock"></i> ${formatDate(item.timestamp)}
+                    </small>
+                </div>
+            `).join('');
+        }
+
+        function useHistoryItem(item) {
+            document.getElementById('kodePartInput').value = item.kode_part;
+            document.querySelector('[data-bs-target="#input-tab"]').click();
+            
+            if (item.data) {
+                showResult({
+                    authentic: item.status === 'ASLI',
+                    message: item.status === 'ASLI' ? 'Spare part ASLI' : 'Tidak ditemukan',
+                    data: item.data
+                });
+            }
+        }
+
+        function clearHistory() {
+            if (confirm('Yakin ingin menghapus semua riwayat?')) {
+                localStorage.removeItem('verification_history');
+                loadHistory();
+                showToast('success', 'Riwayat berhasil dihapus');
+            }
+        }
+
+        // Share Functions
+        function shareWhatsApp() {
+            if (!currentResult || !currentResult.data) return;
+            
+            const text = `✅ Spare part ${currentResult.data.kode_part} adalah ASLI!\n\n` +
+                        `${currentResult.data.nama_part}\n` +
+                        `${currentResult.data.model_motor}\n\n` +
+                        `Verified by Honda Genuine Parts System`;
+            
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function shareFacebook() {
+            const url = window.location.href;
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        }
+
+        function shareTwitter() {
+            if (!currentResult || !currentResult.data) return;
+            
+            const text = `Spare part ${currentResult.data.kode_part} verified as GENUINE! ✅`;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                showToast('success', 'Link berhasil dicopy!');
+            });
+        }
+
+        // Utilities
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (minutes < 1) return 'Baru saja';
+            if (minutes < 60) return `${minutes} menit yang lalu`;
+            if (hours < 24) return `${hours} jam yang lalu`;
+            if (days < 7) return `${days} hari yang lalu`;
+            return date.toLocaleDateString('id-ID');
+        }
+
+        function showToast(type, message) {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+            toast.style.zIndex = '9999';
+            toast.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        // Auto-focus
+        document.getElementById('kodePartInput').focus();
+    </script>
+</body>
+</html>

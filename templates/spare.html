@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Verifikasi - Honda Verification System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
+        .stats-row {
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .history-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .history-table {
+            margin-bottom: 0;
+        }
+        
+        .history-table thead {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+        
+        .history-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge-authentic {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+        
+        .badge-fake {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+        
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .preview-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .preview-img:hover {
+            transform: scale(1.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-section">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="mb-2">
+                        <i class="bi bi-clock-history"></i> Riwayat Verifikasi
+                    </h1>
+                    <p class="mb-0">Log pengecekan keaslian spare part Honda</p>
+                </div>
+                <div>
+                    <a href="/" class="btn btn-light">
+                        <i class="bi bi-house"></i> Beranda
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Statistics -->
+        <div class="row stats-row g-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 2rem;"></i>
+                    <div class="stat-number text-success">{{ stats.total_asli }}</div>
+                    <div class="text-muted">Produk Asli</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-x-circle-fill text-danger" style="font-size: 2rem;"></i>
+                    <div class="stat-number text-danger">{{ stats.total_palsu }}</div>
+                    <div class="text-muted">Tidak Valid</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-calendar-check text-primary" style="font-size: 2rem;"></i>
+                    <div class="stat-number text-primary">{{ stats.total_hari_ini }}</div>
+                    <div class="text-muted">Hari Ini</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-database text-info" style="font-size: 2rem;"></i>
+                    <div class="stat-number text-info">{{ stats.total_semua }}</div>
+                    <div class="text-muted">Total Verifikasi</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <form method="GET" action="/history">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">
+                            <i class="bi bi-funnel"></i> Filter Status
+                        </label>
+                        <select name="status" class="form-select">
+                            <option value="">Semua Status</option>
+                            <option value="ASLI" {{ 'selected' if filter_status == 'ASLI' else '' }}>Asli</option>
+                            <option value="TIDAK DITEMUKAN" {{ 'selected' if filter_status == 'TIDAK DITEMUKAN' else '' }}>Tidak Valid</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">
+                            <i class="bi bi-calendar-range"></i> Dari Tanggal
+                        </label>
+                        <input type="date" name="from_date" class="form-control" value="{{ from_date }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">
+                            <i class="bi bi-calendar-check"></i> Sampai Tanggal
+                        </label>
+                        <input type="date" name="to_date" class="form-control" value="{{ to_date }}">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-search"></i> Filter
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- History Table -->
+        <div class="history-card">
+            <div class="table-responsive">
+                <table class="table history-table mb-0">
+                    <thead>
+                        <tr>
+                            <th width="5%">No</th>
+                            <th width="15%">Kode Part</th>
+                            <th width="15%">Status</th>
+                            <th width="20%">Waktu Pengecekan</th>
+                            <th width="15%">IP Address</th>
+                            <th width="15%">Metode</th>
+                            <th width="15%">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if logs %}
+                            {% for log in logs %}
+                            <tr>
+                                <td>{{ loop.index + offset }}</td>
+                                <td>
+                                    <code class="text-primary">{{ log.kode_part }}</code>
+                                </td>
+                                <td>
+                                    {% if log.status == 'ASLI' %}
+                                    <span class="badge badge-authentic">
+                                        <i class="bi bi-check-circle"></i> ASLI
+                                    </span>
+                                    {% else %}
+                                    <span class="badge badge-fake">
+                                        <i class="bi bi-x-circle"></i> TIDAK VALID
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <i class="bi bi-clock"></i>
+                                    {{ log.waktu_cek }}
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        <i class="bi bi-geo-alt"></i> {{ log.ip_address }}
+                                    </small>
+                                </td>
+                                <td>
+                                    {% if 'AI' in log.user_agent or 'CNN' in log.user_agent %}
+                                    <span class="badge bg-info">
+                                        <i class="bi bi-camera"></i> AI/CNN
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">
+                                        <i class="bi bi-search"></i> Kode
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-sm btn-outline-primary" 
+                                                onclick="viewDetail('{{ log.kode_part }}', '{{ log.status }}', '{{ log.waktu_cek }}')"
+                                                title="Lihat Detail">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success" 
+                                                onclick="exportPDF('{{ log.id_log }}')"
+                                                title="Export PDF">
+                                            <i class="bi bi-file-pdf"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7">
+                                    <div class="empty-state">
+                                        <i class="bi bi-inbox text-muted"></i>
+                                        <h4 class="text-muted">Belum Ada Riwayat</h4>
+                                        <p class="text-muted">
+                                            Belum ada verifikasi yang dilakukan.<br>
+                                            Mulai verifikasi spare part sekarang!
+                                        </p>
+                                        <a href="/cek" class="btn btn-danger">
+                                            <i class="bi bi-search"></i> Mulai Verifikasi
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        {% if total_pages > 1 %}
+        <div class="d-flex justify-content-center mt-4">
+            <nav>
+                <ul class="pagination">
+                    {% if page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page - 1 }}&status={{ filter_status }}&from_date={{ from_date }}&to_date={{ to_date }}">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
+                    {% endif %}
+                    
+                    {% for p in range(1, total_pages + 1) %}
+                        {% if p == page %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ p }}</span>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ p }}&status={{ filter_status }}&from_date={{ from_date }}&to_date={{ to_date }}">
+                                {{ p }}
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page < total_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page + 1 }}&status={{ filter_status }}&from_date={{ from_date }}&to_date={{ to_date }}">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+
+        <!-- Quick Actions -->
+        <div class="text-center mt-4 mb-5">
+            <div class="btn-group" role="group">
+                <a href="/cek" class="btn btn-outline-danger">
+                    <i class="bi bi-search"></i> Verifikasi Kode
+                </a>
+                <a href="/cek-cnn" class="btn btn-outline-danger">
+                    <i class="bi bi-camera"></i> Verifikasi AI
+                </a>
+                <button onclick="exportAllCSV()" class="btn btn-outline-success">
+                    <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+                </button>
+                <button onclick="clearHistory()" class="btn btn-outline-warning">
+                    <i class="bi bi-trash"></i> Hapus Semua
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail -->
+    <div class="modal fade" id="detailModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-info-circle"></i> Detail Verifikasi
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detailContent">
+                    <!-- Content will be loaded by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function viewDetail(kodePart, status, waktu) {
+            const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+            
+            const statusBadge = status === 'ASLI' 
+                ? '<span class="badge bg-success">ASLI</span>'
+                : '<span class="badge bg-danger">TIDAK VALID</span>';
+            
+            document.getElementById('detailContent').innerHTML = `
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Kode Part:</th>
+                        <td><code>${kodePart}</code></td>
+                    </tr>
+                    <tr>
+                        <th>Status:</th>
+                        <td>${statusBadge}</td>
+                    </tr>
+                    <tr>
+                        <th>Waktu Cek:</th>
+                        <td>${waktu}</td>
+                    </tr>
+                </table>
+                
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> 
+                    Untuk detail lengkap spare part, silakan cek di database admin.
+                </div>
+            `;
+            
+            modal.show();
+        }
+
+        function exportPDF(logId) {
+            alert('Fitur export PDF sedang dalam pengembangan!\nLog ID: ' + logId);
+            // TODO: Implement PDF export
+        }
+
+        function exportAllCSV() {
+            alert('Fitur export CSV sedang dalam pengembangan!\n\nData akan di-export dalam format:\nNo, Kode Part, Status, Waktu, IP Address');
+            // TODO: Implement CSV export
+        }
+
+        function clearHistory() {
+            if (confirm('Yakin ingin menghapus SEMUA riwayat verifikasi?\nTindakan ini tidak dapat dibatalkan!')) {
+                alert('Fitur hapus riwayat sedang dalam pengembangan!');
+                // TODO: Implement clear history
+            }
+        }
+
+        // Auto-refresh every 30 seconds
+        setTimeout(() => {
+            location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>

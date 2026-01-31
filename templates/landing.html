@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honda Genuine Parts - Sistem Verifikasi Keaslian</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+        
+        :root {
+            --honda-red: #dc3545;
+            --honda-dark: #8b0000;
+            --honda-darker: #4a0000;
+        }
+        
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            overflow-x: hidden;
+        }
+        
+        /* Navbar Premium */
+        .navbar-premium {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 5px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-premium.scrolled {
+            box-shadow: 0 5px 40px rgba(0,0,0,0.15);
+        }
+        
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--honda-red) 0%, var(--honda-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--honda-red);
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 80%;
+        }
+        
+        /* Hero Section Ultra Premium */
+        .hero-section {
+            background: linear-gradient(135deg, #cc0000 0%, #8b0000 50%, #4a0000 100%);
+            color: white;
+            padding: 150px 0 120px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.05)" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') bottom center no-repeat;
+            pointer-events: none;
+        }
+        
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, 50px) rotate(90deg); }
+            50% { transform: translate(0, 100px) rotate(180deg); }
+            75% { transform: translate(-50px, 50px) rotate(270deg); }
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 25px;
+            text-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.4rem;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+        
+        .btn-hero {
+            padding: 18px 45px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn-hero:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-hero:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .hero-image {
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.05); opacity: 0.3; }
+        }
+        
+        /* Verify Card Premium */
+        .verify-card {
+            background: white;
+            border-radius: 30px;
+            padding: 60px;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+            margin-top: -100px;
+            position: relative;
+            z-index: 10;
+            animation: slideUp 1s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .verify-option {
+            padding: 40px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 3px solid transparent;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .verify-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(220, 53, 69, 0.1), transparent);
+            transition: left 0.6s;
+        }
+        
+        .verify-option:hover::before {
+            left: 100%;
+        }
+        
+        .verify-option:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(220, 53, 69, 0.3);
+            border-color: var(--honda-red);
+            background: white;
+        }
+        
+        .verify-icon {
+            font-size: 5rem;
+            background: linear-gradient(135deg, var(--honda-red) 0%, var(--honda-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease;
+        }
+        
+        .verify-option:hover .verify-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        /* Stats Section Premium */
+        .stats-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #cc0000 0%, #8b0000 50%, #4a0000 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stats-section::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(255,255,255,0.03)" d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') center no-repeat;
+            opacity: 0.5;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 900;
+            display: block;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+        
+        /* Feature Section Premium */
+        .feature-section {
+            padding: 100px 0;
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+        }
+        
+        .section-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--honda-red) 0%, var(--honda-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 60px;
+            font-weight: 300;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 50px 35px;
+            background: white;
+            border-radius: 25px;
+            height: 100%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--honda-red) 0%, var(--honda-dark) 100%);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(220, 53, 69, 0.2);
+            border-color: var(--honda-red);
+        }
+        
+        .feature-icon {
+            font-size: 4rem;
+            background: linear-gradient(135deg, var(--honda-red) 0%, var(--honda-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+        
+        /* Panduan Section Premium */
+        .panduan-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            position: relative;
+        }
+        
+        .panduan-card {
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            height: 100%;
+            transition: all 0.4s ease;
+            border: 2px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .panduan-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(220, 53, 69, 0.05) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .panduan-card:hover::after {
+            opacity: 1;
+        }
+        
+        .panduan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(220, 53, 69, 0.15);
+            border-color: var(--honda-red);
+        }
+        
+        .panduan-icon-wrapper {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--honda-red) 0%, var(--honda-dark) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            box-shadow: 0 10px 30px rgba(220, 53, 69, 0.3);
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .panduan-card:hover .panduan-icon-wrapper {
+            transform: rotate(360deg) scale(1.1);
+        }
+        
+        .panduan-icon-wrapper i {
+            font-size: 3rem;
+            color: white;
+        }
+        
+        .panduan-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .panduan-text {
+            color: #6c757d;
+            line-height: 1.8;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .alert-premium {
+            border-radius: 20px;
+            border: none;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        /* How Section Premium */
+        .how-section {
+            padding: 100px 0;
+            background: white;
+        }
+        
+        .step-item {
+            position: relative;
+            padding: 40px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            transition: all 0.4s ease;
+            border: 2px solid transparent;
+        }
+        
+        .step-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 15px 40px rgba(220, 53, 69, 0.2);
+            border-color: var(--honda-red);
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -25px;
+            left: 40px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--honda-red) 0%, var(--honda-dark) 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 900;
+            box-shadow: 0 10px 30px rgba(220, 53, 69, 0.4);
+        }
+        
+        /* Testimonial Premium */
+        .testimonial-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        
+        .testimonial-card {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: 100%;
+            transition: all 0.4s ease;
+            border: 2px solid transparent;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            border-color: var(--honda-red);
+        }
+        
+        .testimonial-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--honda-red) 0%, var(--honda-dark) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(220, 53, 69, 0.3);
+        }
+        
+        /* CTA Section Premium */
+        .cta-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(220, 53, 69, 0.2) 0%, transparent 70%);
+            top: -250px;
+            left: -250px;
+            animation: float 15s ease-in-out infinite;
+        }
+        
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(220, 53, 69, 0.2) 0%, transparent 70%);
+            bottom: -250px;
+            right: -250px;
+            animation: float 20s ease-in-out infinite reverse;
+        }
+        
+        /* Footer Premium */
+        .footer {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: var(--honda-red);
+            transform: translateX(5px);
+        }
+        
+        /* Floating Button Premium */
+        .floating-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--honda-red) 0%, var(--honda-dark) 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 30px rgba(220, 53, 69, 0.4);
+            z-index: 1000;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        
+        .floating-btn:hover {
+            transform: scale(1.1) rotate(360deg);
+            box-shadow: 0 15px 40px rgba(220, 53, 69, 0.6);
+        }
+        
+        /* Animations */
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .fade-in-left {
+            animation: fadeInLeft 0.8s ease-out;
+        }
+        
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .verify-card {
+                margin-top: -60px;
+                padding: 30px;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .stat-number {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Premium -->
+    <nav class="navbar navbar-expand-lg navbar-premium fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-shield-check"></i> Honda Genuine Parts
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#beranda">Beranda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#fitur">Fitur</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#panduan">Panduan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#cara-kerja">Cara Kerja</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#testimoni">Testimoni</a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <a class="btn btn-outline-danger rounded-pill px-4" href="/login">
+                            <i class="bi bi-person"></i> Login Admin
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section Premium -->
+    <section class="hero-section" id="beranda" style="margin-top: 76px;">
+        <div class="container">
+            <div class="row align-items-center hero-content">
+                <div class="col-lg-6 mb-5 mb-lg-0 fade-in-left">
+                    <h1 class="hero-title">Pastikan Spare Part Honda Anda 100% Asli!</h1>
+                    <p class="hero-subtitle">
+                        Sistem verifikasi keaslian spare part Honda dengan teknologi AI terdepan dan database terintegrasi untuk keamanan berkendara Anda
+                    </p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="#verifikasi" class="btn btn-light btn-hero">
+                            <i class="bi bi-search"></i> Mulai Verifikasi
+                        </a>
+                        <a href="#cara-kerja" class="btn btn-outline-light btn-hero">
+                            <i class="bi bi-play-circle"></i> Pelajari Cara Kerja
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <i class="bi bi-shield-check hero-image" style="font-size: 20rem;"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Verification Options Premium -->
+    <section id="verifikasi" class="pb-5">
+        <div class="container">
+            <div class="verify-card">
+                <div class="text-center mb-5">
+                    <h2 class="section-title">
+                        <i class="bi bi-search"></i> Pilih Metode Verifikasi
+                    </h2>
+                    <p class="section-subtitle">
+                        Kami menyediakan 2 metode canggih untuk memverifikasi keaslian spare part Honda Anda dengan akurasi tinggi
+                    </p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <a href="/cek" class="text-decoration-none text-dark">
+                            <div class="verify-option">
+                                <i class="bi bi-upc-scan verify-icon"></i>
+                                <h3 class="mb-3 fw-bold">Verifikasi dengan Kode Part</h3>
+                                <p class="text-muted mb-4">
+                                    Masukkan kode part yang tertera pada spare part atau kemasan untuk verifikasi instan dari database resmi Honda
+                                </p>
+                                <ul class="text-start text-muted mb-4">
+                                    <li class="mb-2">✓ Verifikasi real-time dalam hitungan detik</li>
+                                    <li class="mb-2">✓ Info lengkap: harga, spesifikasi, stok</li>
+                                    <li class="mb-2">✓ Database resmi terintegrasi</li>
+                                    <li class="mb-2">✓ Riwayat verifikasi tersimpan</li>
+                                </ul>
+                                <button class="btn btn-danger btn-lg w-100">
+                                    <i class="bi bi-search"></i> Mulai Verifikasi
+                                </button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <a href="/cek-cnn" class="text-decoration-none text-dark">
+                            <div class="verify-option">
+                                <i class="bi bi-camera verify-icon"></i>
+                                <h3 class="mb-3 fw-bold">Verifikasi dengan AI/CNN</h3>
+                                <p class="text-muted mb-4">
+                                    Upload foto spare part untuk analisis keaslian menggunakan teknologi Artificial Intelligence dan Machine Learning
+                                </p>
+                                <ul class="text-start text-muted mb-4">
+                                    <li class="mb-2">✓ Analisis visual berbasis AI/CNN</li>
+                                    <li class="mb-2">✓ Deteksi hologram dan watermark</li>
+                                    <li class="mb-2">✓ Analisis tekstur dan material</li>
+                                    <li class="mb-2">✓ Confidence score akurasi 95%+</li>
+                                </ul>
+                                <button class="btn btn-outline-danger btn-lg w-100">
+                                    <i class="bi bi-camera"></i> Upload & Analisa
+                                </button>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section Premium -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-6 mb-4 mb-md-0">
+                    <div class="stat-item fade-in-up">
+                        <span class="stat-number counter" data-target="10000">0</span>+
+                        <span class="stat-label d-block">Verifikasi Berhasil</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-4 mb-md-0">
+                    <div class="stat-item fade-in-up" style="animation-delay: 0.1s;">
+                        <span class="stat-number counter" data-target="500">0</span>+
+                        <span class="stat-label d-block">Spare Parts Original</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item fade-in-up" style="animation-delay: 0.2s;">
+                        <span class="stat-number counter" data-target="95">0</span>%
+                        <span class="stat-label d-block">Akurasi AI</span>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item fade-in-up" style="animation-delay: 0.3s;">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label d-block">Layanan Aktif</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section Premium -->
+    <section class="feature-section" id="fitur">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">
+                    <i class="bi bi-star"></i> Mengapa Pilih Kami?
+                </h2>
+                <p class="section-subtitle">
+                    Teknologi terdepan dan layanan terpercaya untuk keamanan berkendara Anda
+                </p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card fade-in-up">
+                        <i class="bi bi-shield-check feature-icon"></i>
+                        <h4 class="fw-bold mb-3">Database Resmi</h4>
+                        <p class="text-muted">
+                            Terhubung langsung dengan database resmi Honda untuk informasi spare part yang akurat dan ter-update
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card fade-in-up" style="animation-delay: 0.1s;">
+                        <i class="bi bi-cpu feature-icon"></i>
+                        <h4 class="fw-bold mb-3">Teknologi AI/CNN</h4>
+                        <p class="text-muted">
+                            Menggunakan Convolutional Neural Network untuk analisis visual dan deteksi keaslian berdasarkan citra
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card fade-in-up" style="animation-delay: 0.2s;">
+                        <i class="bi bi-lightning-charge feature-icon"></i>
+                        <h4 class="fw-bold mb-3">Verifikasi Instan</h4>
+                        <p class="text-muted">
+                            Hasil verifikasi real-time dalam hitungan detik untuk kenyamanan dan efisiensi Anda
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card fade-in-up" style="animation-delay: 0.3s;">
+                        <i class="bi bi-phone feature-icon"></i>
+                        <h4 class="fw-bold mb-3">Mobile Responsive</h4>
+                        <p class="text-muted">
+                            Dapat diakses dari smartphone, tablet, atau komputer dengan tampilan yang optimal
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card fade-in-up" style="animation-delay: 0.4s;">
+                        <i class="bi bi-lock feature-icon"></i>
+                        <h4 class="fw-bold mb-3">Aman & Terpercaya</h4>
+                        <p class="text-muted">
+                            Data Anda terlindungi dengan enkripsi SSL dan sistem keamanan berlapis
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card fade-in-up" style="animation-delay: 0.5s;">
+                        <i class="bi bi-graph-up feature-icon"></i>
+                        <h4 class="fw-bold mb-3">Akurasi Tinggi</h4>
+                        <p class="text-muted">
+                            Tingkat akurasi verifikasi hingga 95%+ dengan machine learning yang terus berkembang
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Panduan Section Premium -->
+    <section class="panduan-section" id="panduan">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">
+                    <i class="bi bi-book"></i> Panduan Identifikasi Spare Part Asli
+                </h2>
+                <p class="section-subtitle">
+                    6 Ciri khas yang membedakan spare part original Honda dengan produk palsu
+                </p>
+            </div>
+            
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="panduan-card fade-in-up">
+                        <div class="panduan-icon-wrapper">
+                            <i class="bi bi-award-fill"></i>
+                        </div>
+                        <h4 class="panduan-title">✓ Hologram AHM Original</h4>
+                        <p class="panduan-text">
+                            Spare part asli memiliki hologram AHM (Astra Honda Motor) dengan permukaan timbul, warna cerah yang berubah-ubah saat terkena cahaya, dan detail yang tajam. Hologram palsu biasanya flat dan warnanya kusam.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="panduan-card fade-in-up" style="animation-delay: 0.1s;">
+                        <div class="panduan-icon-wrapper">
+                            <i class="bi bi-upc-scan"></i>
+                        </div>
+                        <h4 class="panduan-title">✓ Kode Produksi</h4>
+                        <p class="panduan-text">
+                            Terdapat nomor part dan kode produksi yang tercetak rapi, jelas, dan tidak blur. Setiap kode dapat diverifikasi melalui sistem resmi Honda dan sesuai dengan katalog original.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="panduan-card fade-in-up" style="animation-delay: 0.2s;">
+                        <div class="panduan-icon-wrapper">
+                            <i class="bi bi-gem"></i>
+                        </div>
+                        <h4 class="panduan-title">✓ Kualitas Material</h4>
+                        <p class="panduan-text">
+                            Bahan terlihat halus, tidak terdapat cacat produksi, finishing presisi sempurna. Material berkualitas tinggi dengan warna konsisten dan tidak mudah pudar atau mengelupas.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="panduan-card fade-in-up" style="animation-delay: 0.3s;">
+                        <div class="panduan-icon-wrapper">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        <h4 class="panduan-title">✓ Kemasan Resmi</h4>
+                        <p class="panduan-text">
+                            Kemasan original Honda memiliki desain profesional, logo yang tajam, informasi lengkap dalam bahasa Indonesia dan Inggris, serta barcode yang dapat dipindai untuk verifikasi.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="panduan-card fade-in-up" style="animation-delay: 0.4s;">
+                        <div class="panduan-icon-wrapper">
+                            <i class="bi bi-patch-check-fill"></i>
+                        </div>
+                        <h4 class="panduan-title">✓ Sertifikat Keaslian</h4>
+                        <p class="panduan-text">
+                            Dilengkapi dengan sertifikat atau kartu garansi resmi dari Honda dengan nomor seri yang unik. Sertifikat palsu biasanya tidak memiliki nomor yang dapat diverifikasi.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="panduan-card fade-in-up" style="animation-delay: 0.5s;">
+                        <div class="panduan-icon-wrapper">
+                            <i class="bi bi-shop"></i>
+                        </div>
+                        <h4 class="panduan-title">✓ Dealer Resmi</h4>
+                        <p class="panduan-text">
+                            Pastikan membeli dari dealer resmi Honda atau bengkel authorized. Dealer resmi memiliki sertifikat dan dapat memberikan garansi serta after-sales service yang terpercaya.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Alert Boxes Premium -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <div class="alert alert-warning alert-premium border-0">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-exclamation-triangle-fill"></i> Peringatan Penting
+                        </h5>
+                        <p class="mb-0">
+                            Menggunakan spare part palsu dapat membahayakan keselamatan berkendara, merusak komponen lain pada motor, dan membatalkan garansi kendaraan Anda. Selalu pastikan keaslian sebelum membeli!
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="alert alert-danger alert-premium border-0">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-x-octagon-fill"></i> Ciri-Ciri Spare Part Palsu
+                        </h5>
+                        <ul class="mb-0">
+                            <li>Harga jauh lebih murah dari pasaran</li>
+                            <li>Tidak ada hologram atau mudah terkelupas</li>
+                            <li>Cetakan huruf dan angka blur/tidak jelas</li>
+                            <li>Material terasa ringan dan berkualitas rendah</li>
+                            <li>Kemasan tidak rapi atau tanpa kemasan</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="/panduan" class="btn btn-danger btn-hero">
+                    <i class="bi bi-book"></i> Lihat Panduan Lengkap
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Premium -->
+    <section class="how-section" id="cara-kerja">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">
+                    <i class="bi bi-gear"></i> Cara Kerja Sistem
+                </h2>
+                <p class="section-subtitle">
+                    Proses verifikasi yang mudah dan cepat dalam 3 langkah sederhana
+                </p>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6 mb-5">
+                    <h4 class="mb-4 text-danger fw-bold">
+                        <i class="bi bi-upc-scan"></i> Metode 1: Verifikasi Kode Part
+                    </h4>
+                    
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <h5 class="mt-3 mb-2 fw-bold">Cari Kode Part</h5>
+                        <p class="text-muted mb-0">
+                            Temukan kode part pada spare part atau kemasan Anda (contoh: 13101-KVB-900). Kode biasanya tertera jelas pada label produk.
+                        </p>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <h5 class="mt-3 mb-2 fw-bold">Input Kode</h5>
+                        <p class="text-muted mb-0">
+                            Masukkan kode part pada form verifikasi di website. Sistem akan langsung melakukan pencarian di database.
+                        </p>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <h5 class="mt-3 mb-2 fw-bold">Lihat Hasil</h5>
+                        <p class="text-muted mb-0">
+                            Dapatkan informasi lengkap: status keaslian, harga resmi, spesifikasi detail, dan ketersediaan stok.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6 mb-5">
+                    <h4 class="mb-4 text-danger fw-bold">
+                        <i class="bi bi-camera"></i> Metode 2: Verifikasi dengan AI/CNN
+                    </h4>
+                    
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <h5 class="mt-3 mb-2 fw-bold">Ambil Foto Berkualitas</h5>
+                        <p class="text-muted mb-0">
+                            Foto spare part dengan jelas, pastikan hologram, kode part, dan detail produk terlihat dengan pencahayaan yang baik.
+                        </p>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <h5 class="mt-3 mb-2 fw-bold">Upload Foto</h5>
+                        <p class="text-muted mb-0">
+                            Upload foto ke sistem verifikasi. Tambahkan kode part (opsional) untuk verifikasi ganda yang lebih akurat.
+                        </p>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <h5 class="mt-3 mb-2 fw-bold">Analisis AI</h5>
+                        <p class="text-muted mb-0">
+                            AI menganalisis foto menggunakan CNN dan memberikan hasil dengan confidence score, detail fitur yang terdeteksi, dan rekomendasi.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Premium -->
+    <section class="testimonial-section" id="testimoni">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">
+                    <i class="bi bi-chat-quote"></i> Testimoni Pengguna
+                </h2>
+                <p class="section-subtitle">
+                    Apa kata mereka yang sudah menggunakan sistem verifikasi kami
+                </p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="testimonial-card fade-in-up">
+                        <div class="testimonial-avatar">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="mb-3 fst-italic">
+                            "Sangat membantu! Sekarang saya bisa pastikan spare part yang saya beli itu 100% asli. Prosesnya cepat, mudah, dan hasilnya akurat."
+                        </p>
+                        <strong>Budi Santoso</strong><br>
+                        <small class="text-muted">Pemilik Honda Beat</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="testimonial-card fade-in-up" style="animation-delay: 0.1s;">
+                        <div class="testimonial-avatar">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="mb-3 fst-italic">
+                            "Fitur AI-nya luar biasa canggih! Tinggal foto langsung ketahuan asli atau palsu. Sangat recommended untuk bengkel dan konsumen!"
+                        </p>
+                        <strong>Rina Wijaya</strong><br>
+                        <small class="text-muted">Owner Bengkel Motor</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="testimonial-card fade-in-up" style="animation-delay: 0.2s;">
+                        <div class="testimonial-avatar">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="mb-3 fst-italic">
+                            "Website yang sangat berguna untuk mencegah pembelian spare part palsu. Interface-nya modern, user friendly, dan responsif."
+                        </p>
+                        <strong>Ahmad Fauzi</strong><br>
+                        <small class="text-muted">Mekanik Honda</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section Premium -->
+    <section class="cta-section">
+        <div class="container" style="position: relative; z-index: 1;">
+            <h2 class="mb-4 fw-bold" style="font-size: 3rem;">Siap Memverifikasi Spare Part Anda?</h2>
+            <p class="lead mb-5" style="font-size: 1.3rem;">
+                Lindungi investasi kendaraan Anda dengan memastikan menggunakan spare part 100% original Honda
+            </p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="/cek" class="btn btn-danger btn-hero">
+                    <i class="bi bi-search"></i> Verifikasi dengan Kode
+                </a>
+                <a href="/cek-cnn" class="btn btn-outline-light btn-hero">
+                    <i class="bi bi-camera"></i> Verifikasi dengan AI
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Premium -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold mb-3" style="background: linear-gradient(135deg, var(--honda-red) 0%, var(--honda-dark) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        <i class="bi bi-shield-check" style="color: var(--honda-red);"></i> Honda Genuine Parts
+                    </h5>
+                    <p class="text-muted">
+                        Sistem verifikasi keaslian spare part Honda dengan teknologi AI/CNN dan database terintegrasi untuk keamanan berkendara Anda.
+                    </p>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#beranda"><i class="bi bi-chevron-right"></i> Beranda</a></li>
+                        <li class="mb-2"><a href="#fitur"><i class="bi bi-chevron-right"></i> Fitur</a></li>
+                        <li class="mb-2"><a href="#panduan"><i class="bi bi-chevron-right"></i> Panduan</a></li>
+                        <li class="mb-2"><a href="#cara-kerja"><i class="bi bi-chevron-right"></i> Cara Kerja</a></li>
+                        <li class="mb-2"><a href="/login"><i class="bi bi-chevron-right"></i> Login Admin</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold mb-3">Kontak</h5>
+                    <ul class="list-unstyled text-muted">
+                        <li class="mb-2">
+                            <i class="bi bi-envelope text-danger"></i> info@hondaverification.com
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-telephone text-danger"></i> (021) 123-4567
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-clock text-danger"></i> 24/7 Online Service
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr style="background: rgba(255,255,255,0.1); border: none; height: 1px;">
+            
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0 text-muted">
+                        &copy; 2024 Honda Verification System. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0 text-muted">
+                        Dibuat dengan <i class="bi bi-heart-fill text-danger"></i> untuk Tugas Skripsi
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Action Button Premium -->
+    <a href="#verifikasi" class="floating-btn" title="Mulai Verifikasi">
+        <i class="bi bi-search"></i>
+    </a>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar-premium');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Counter Animation
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
+
+        const animateCounters = () => {
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    const inc = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 1);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        };
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    
+                    // Animate counters when stats section is visible
+                    if (entry.target.classList.contains('stats-section')) {
+                        animateCounters();
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.fade-in-up, .fade-in-left, .stats-section').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            observer.observe(el);
+        });
+
+        // Floating button animation
+        const floatingBtn = document.querySelector('.floating-btn');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                floatingBtn.style.opacity = '1';
+                floatingBtn.style.visibility = 'visible';
+            } else {
+                floatingBtn.style.opacity = '0';
+                floatingBtn.style.visibility = 'hidden';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan Sparepart Asli Honda</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #cc0000 0%, #8b0000 50%, #4a0000 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.05" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,101.3C1248,85,1344,75,1392,69.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+            background-size: cover;
+            pointer-events: none;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 40px rgba(0,0,0,0.4); }
+        }
+        
+        .header-icon i {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #dc3545 0%, #8b0000 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out backwards;
+        }
+        
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #dc3545 0%, #8b0000 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(220, 53, 69, 0.4);
+        }
+        
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #dc3545 0%, #8b0000 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover .card-icon {
+            transform: rotate(360deg) scale(1.1);
+        }
+        
+        .card-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .card h3 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h3::before {
+            content: '✓';
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .card p {
+            color: #6c757d;
+            font-size: 1rem;
+            line-height: 1.8;
+            margin: 0;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe5a3 100%);
+            border-left: 6px solid #ffc107;
+            padding: 30px;
+            border-radius: 20px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 1s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .warning-box h3 {
+            color: #856404;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .warning-box h3 i {
+            font-size: 1.8rem;
+        }
+        
+        .warning-box p {
+            color: #856404;
+            font-size: 1rem;
+            line-height: 1.8;
+            margin: 0;
+        }
+        
+        .danger-box {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-left: 6px solid #dc3545;
+            padding: 30px;
+            border-radius: 20px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 1.2s ease-out;
+        }
+        
+        .danger-box h3 {
+            color: #721c24;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .danger-box h3 i {
+            font-size: 1.8rem;
+        }
+        
+        .danger-box ul {
+            color: #721c24;
+            font-size: 1rem;
+            line-height: 2;
+            margin: 15px 0 0 20px;
+        }
+        
+        .danger-box li {
+            margin-bottom: 8px;
+        }
+        
+        .cta-box {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-left: 6px solid #28a745;
+            padding: 30px;
+            border-radius: 20px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 1.4s ease-out;
+        }
+        
+        .cta-box h3 {
+            color: #155724;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .cta-box p {
+            color: #155724;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        
+        .btn-verify {
+            display: inline-block;
+            background: linear-gradient(135deg, #dc3545 0%, #8b0000 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-verify:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(220, 53, 69, 0.5);
+            color: white;
+        }
+        
+        .btn-verify i {
+            margin-right: 8px;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            margin-top: 30px;
+        }
+        
+        .back-link:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            transform: translateX(-5px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .card {
+                padding: 25px;
+            }
+            
+            .card h3 {
+                font-size: 1.3rem;
+            }
+            
+            body {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-icon">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <h1>📘 Panduan Identifikasi Sparepart Honda Asli</h1>
+            <p>Pelajari cara membedakan sparepart original Honda dengan produk palsu untuk keamanan dan performa kendaraan Anda</p>
+        </div>
+
+        <!-- Cards Grid -->
+        <div class="cards-grid">
+            <!-- Card 1 -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="bi bi-award-fill"></i>
+                </div>
+                <h3>Hologram AHM Original</h3>
+                <p>Sparepart asli memiliki hologram AHM (Astra Honda Motor) dengan permukaan timbul, warna cerah yang berubah-ubah saat terkena cahaya, dan detail yang tajam. Hologram palsu biasanya flat dan warnanya kusam.</p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="bi bi-upc-scan"></i>
+                </div>
+                <h3>Kode Produksi</h3>
+                <p>Terdapat nomor part dan kode produksi yang tercetak rapi, jelas, dan tidak blur. Setiap kode dapat diverifikasi melalui sistem resmi Honda dan sesuai dengan katalog original.</p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="bi bi-gem"></i>
+                </div>
+                <h3>Kualitas Material</h3>
+                <p>Bahan terlihat halus, tidak terdapat cacat produksi, finishing presisi sempurna. Material berkualitas tinggi dengan warna konsisten dan tidak mudah pudar atau mengelupas.</p>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+                <h3>Kemasan Resmi</h3>
+                <p>Kemasan original Honda memiliki desain profesional, logo yang tajam, informasi lengkap dalam bahasa Indonesia dan Inggris, serta barcode yang dapat dipindai untuk verifikasi.</p>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="bi bi-patch-check-fill"></i>
+                </div>
+                <h3>Sertifikat Keaslian</h3>
+                <p>Dilengkapi dengan sertifikat atau kartu garansi resmi dari Honda dengan nomor seri yang unik. Sertifikat palsu biasanya tidak memiliki nomor yang dapat diverifikasi.</p>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="card">
+                <div class="card-icon">
+                    <i class="bi bi-shop"></i>
+                </div>
+                <h3>Dealer Resmi</h3>
+                <p>Pastikan membeli dari dealer resmi Honda atau bengkel authorized. Dealer resmi memiliki sertifikat dan dapat memberikan garansi serta after-sales service yang terpercaya.</p>
+            </div>
+        </div>
+
+        <!-- Warning Box -->
+        <div class="warning-box">
+            <h3>
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                Peringatan Penting
+            </h3>
+            <p>Menggunakan sparepart palsu dapat membahayakan keselamatan berkendara, merusak komponen lain pada motor, dan membatalkan garansi kendaraan Anda. Selalu pastikan keaslian sebelum membeli!</p>
+        </div>
+
+        <!-- Danger Box -->
+        <div class="danger-box">
+            <h3>
+                <i class="bi bi-x-octagon-fill"></i>
+                Ciri-Ciri Sparepart Palsu
+            </h3>
+            <ul>
+                <li>Harga jauh lebih murah dari pasaran (terlalu bagus untuk menjadi kenyataan)</li>
+                <li>Tidak ada hologram atau hologram yang mudah terkelupas</li>
+                <li>Cetakan huruf dan angka blur atau tidak jelas</li>
+                <li>Material terasa ringan dan kualitas rendah</li>
+                <li>Kemasan tidak rapi atau tidak ada kemasan sama sekali</li>
+                <li>Dijual di tempat yang bukan dealer resmi dengan harga sangat murah</li>
+            </ul>
+        </div>
+
+        <!-- CTA Box -->
+        <div class="cta-box">
+            <h3>Verifikasi Sparepart Anda Sekarang!</h3>
+            <p>Gunakan sistem verifikasi online kami untuk memastikan keaslian sparepart Honda Anda</p>
+            <a href="/cek-sparepart" class="cek-sparepart">
+                <i class="bi bi-shield-check"></i>
+                Mulai Verifikasi
+            </a>
+        </div>
+
+        <!-- Back Link -->
+        <div class="text-center">
+            <a href="/" class="back-link">
+                <i class="bi bi-arrow-left-circle"></i>
+                Kembali ke Beranda
+            </a>
+        </div>
+    </div>
+</body>
+</html>

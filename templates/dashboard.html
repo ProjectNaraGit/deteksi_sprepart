@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Honda Verification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --honda-red: #dc3545;
+            --honda-dark-red: #c82333;
+            --sidebar-width: 260px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* Sidebar Styling */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--honda-red) 0%, var(--honda-dark-red) 100%);
+            color: white;
+            padding: 0;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-header i {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .sidebar-header h5 {
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .sidebar .nav {
+            padding: 20px 0;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            padding: 14px 25px;
+            margin: 5px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .sidebar .nav-link i {
+            font-size: 1.2rem;
+        }
+        
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .sidebar-footer small {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+        
+        /* Top Navbar */
+        .navbar-custom {
+            background: white;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            padding: 18px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        
+        .navbar-custom h4 {
+            margin: 0;
+            color: #2c3e50;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 8px 15px;
+            background: #f8f9fa;
+            border-radius: 25px;
+        }
+        
+        .user-info i {
+            font-size: 1.5rem;
+            color: var(--honda-red);
+        }
+        
+        /* Statistics Cards */
+        .stats-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.5), rgba(255,255,255,0));
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .stats-card .card-body {
+            padding: 25px;
+        }
+        
+        .stats-icon {
+            font-size: 3.5rem;
+            opacity: 0.3;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .stats-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stats-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stats-footer {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Card Enhancements */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding: 18px 25px;
+            font-weight: 600;
+            border-radius: 15px 15px 0 0 !important;
+        }
+        
+        /* Quick Actions */
+        .quick-actions .btn {
+            padding: 12px 25px;
+            font-weight: 500;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border-width: 2px;
+        }
+        
+        .quick-actions .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        /* Table Enhancements */
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            background: #f8f9fa;
+            border-bottom: 2px solid var(--honda-red);
+            color: #2c3e50;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 15px;
+        }
+        
+        .table tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        .table tbody tr:hover {
+            background: #f8f9fa;
+            transform: scale(1.01);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .table tbody td {
+            vertical-align: middle;
+            padding: 15px;
+        }
+        
+        /* Log Verifikasi */
+        .log-list {
+            max-height: 450px;
+            overflow-y: auto;
+            padding: 0;
+        }
+        
+        .log-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .log-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        .log-list::-webkit-scrollbar-thumb {
+            background: var(--honda-red);
+            border-radius: 3px;
+        }
+        
+        .log-item {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .log-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .log-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 320px;
+            padding: 15px;
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 6px 12px;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+        
+        /* Alert */
+        .alert {
+            border: none;
+            border-radius: 12px;
+            padding: 16px 20px;
+            border-left: 4px solid;
+        }
+        
+        .alert-info {
+            background: #e7f3ff;
+            border-left-color: #0dcaf0;
+            color: #055160;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #664d03;
+        }
+        
+        /* Modal */
+        .modal-content {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .modal-footer {
+            padding: 18px 25px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        /* Form Styling */
+        .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .form-control,
+        .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--honda-red);
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15);
+        }
+        
+        /* Loading Animation */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .spinner-border {
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-card .card-body {
+                padding: 20px;
+            }
+            
+            .stats-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="bi bi-shield-check"></i>
+            <h5>Honda Admin</h5>
+            <small class="text-white-50">Verification System</small>
+        </div>
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="/dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/panduan" target="_blank">
+                    <i class="bi bi-book"></i>
+                    <span>Panduan Lengkap</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/cek" target="_blank">
+                    <i class="bi bi-search"></i>
+                    <span>Verifikasi Kode</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/cek-cnn" target="_blank">
+                    <i class="bi bi-camera"></i>
+                    <span>Verifikasi AI/CNN</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#addPartModal">
+                    <i class="bi bi-plus-circle"></i>
+                    <span>Tambah Spare Part</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="exportData()">
+                    <i class="bi bi-download"></i>
+                    <span>Export Data</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <small>v2.0.0 - AI Enabled</small><br>
+            <small>&copy; 2025 Honda</small>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-custom">
+            <div class="container-fluid px-0">
+                <h4>
+                    <i class="bi bi-speedometer2"></i>
+                    Dashboard Admin
+                </h4>
+                <div class="user-info">
+                    <i class="bi bi-person-circle"></i>
+                    <div>
+                        <div style="font-weight: 600; font-size: 0.95rem;">{{ admin_name }}</div>
+                        <small class="text-muted">Administrator</small>
+                    </div>
+                    <span class="badge bg-danger">Admin</span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <div class="p-4">
+            <!-- Alert Info -->
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+                <i class="bi bi-info-circle-fill"></i>
+                <strong>Sistem Aktif!</strong> Dashboard menampilkan data real-time. Refresh otomatis setiap 30 detik.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="stats-label">Total Parts</div>
+                            <div class="stats-value">{{ total_parts }}</div>
+                            <div class="stats-footer">
+                                <i class="bi bi-arrow-up"></i> 100% Original
+                            </div>
+                            <i class="bi bi-gear-fill stats-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card bg-success text-white">
+                        <div class="card-body">
+                            <div class="stats-label">Kategori</div>
+                            <div class="stats-value">{{ total_kategori }}</div>
+                            <div class="stats-footer">
+                                <i class="bi bi-tags"></i> Tersedia
+                            </div>
+                            <i class="bi bi-tags-fill stats-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="stats-label">Total Stok</div>
+                            <div class="stats-value">{{ total_stok }}</div>
+                            <div class="stats-footer">
+                                <i class="bi bi-box-seam"></i> Unit
+                            </div>
+                            <i class="bi bi-box-seam stats-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card bg-danger text-white">
+                        <div class="card-body">
+                            <div class="stats-label">Verifikasi Hari Ini</div>
+                            <div class="stats-value">{{ total_verifikasi }}</div>
+                            <div class="stats-footer">
+                                <i class="bi bi-check-circle"></i> Pengecekan
+                            </div>
+                            <i class="bi bi-check-circle-fill stats-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row g-4 mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">
+                                <i class="bi bi-lightning-charge-fill text-warning"></i> Quick Actions
+                            </h5>
+                            <div class="quick-actions d-flex gap-2 flex-wrap">
+                                <a href="/cek" target="_blank" class="btn btn-outline-primary">
+                                    <i class="bi bi-search"></i> Verifikasi Kode
+                                </a>
+                                <a href="/cek-cnn" target="_blank" class="btn btn-outline-danger">
+                                    <i class="bi bi-camera"></i> Verifikasi AI
+                                </a>
+                                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#addPartModal">
+                                    <i class="bi bi-plus-circle"></i> Tambah Spare Part
+                                </button>
+                                <button class="btn btn-outline-info" onclick="refreshData(event)" data-refresh-btn>
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh Data
+                                </button>
+                                <button class="btn btn-outline-warning" onclick="exportData()">
+                                    <i class="bi bi-download"></i> Export CSV
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <i class="bi bi-bar-chart-fill"></i> Verifikasi Mingguan
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="verificationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <i class="bi bi-pie-chart-fill"></i> Status Verifikasi
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tables Row -->
+            <div class="row g-4">
+                <!-- Spare Parts Terbaru -->
+                <div class="col-lg-7">
+                    <div class="card">
+                        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="bi bi-list-ul"></i> Spare Parts Terbaru
+                            </h5>
+                            <span class="badge bg-white text-danger">{{ total_parts }} Total</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Kode Part</th>
+                                            <th>Nama</th>
+                                            <th>Model</th>
+                                            <th>Stok</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for part in spareparts %}
+                                        <tr>
+                                            <td><code class="text-primary">{{ part.kode_part }}</code></td>
+                                            <td><strong>{{ part.nama_part }}</strong></td>
+                                            <td><small class="text-muted">{{ part.model_motor }}</small></td>
+                                            <td>
+                                                {% if part.stok > 10 %}
+                                                <span class="badge bg-success">{{ part.stok }}</span>
+                                                {% elif part.stok > 0 %}
+                                                <span class="badge bg-warning text-dark">{{ part.stok }}</span>
+                                                {% else %}
+                                                <span class="badge bg-danger">Habis</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary" onclick="viewDetail('{{ part.kode_part }}')">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Log Verifikasi -->
+                <div class="col-lg-5">
+                    <div class="card">
+                        <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="bi bi-clock-history"></i> Log Verifikasi
+                            </h5>
+                            <span class="badge bg-white text-info">
+                                <i class="bi bi-broadcast"></i> Real-time
+                            </span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="log-list">
+                                {% for log in logs %}
+                                <div class="log-item">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center gap-2 mb-2">
+                                                <code class="text-primary">{{ log.kode_part }}</code>
+                                                {% if log.status == 'ASLI' %}
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle-fill"></i> {{ log.status }}
+                                                </span>
+                                                {% else %}
+                                                <span class="badge bg-danger">
+                                                    <i class="bi bi-x-circle-fill"></i> {{ log.status }}
+                                                </span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="small text-muted">
+                                                <i class="bi bi-clock"></i> {{ log.waktu_cek }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah Part -->
+    <div class="modal fade" id="addPartModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-plus-circle"></i> Tambah Spare Part Baru
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addPartForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Kode Part *</label>
+                                <input type="text" class="form-control" id="kode_part" placeholder="13101-KVB-900" required>
+                                <small class="text-muted">Format: XXXXX-XXX-XXX</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nama Part *</label>
+                                <input type="text" class="form-control" id="nama_part" placeholder="Piston Kit STD" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Kategori *</label>
+                                <select class="form-select" id="kategori" required>
+                                    <option value="">Pilih Kategori</option>
+                                    <option value="1">Mesin</option>
+                                    <option value="2">Body</option>
+                                    <option value="3">Kelistrikan</option>
+                                    <option value="4">Rem</option>
+                                    <option value="5">Oli & Pelumas</option>
+                                    <option value="6">Filter</option>
+                                    <option value="7">Transmisi</option>
+                                    <option value="8">Suspensi</option>
+                                    <option value="9">Ban & Velg</option>
+                                    <option value="10">Aksesoris</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Model Motor *</label>
+                                <input type="text" class="form-control" id="model_motor" placeholder="Honda Beat" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Harga (Rp) *</label>
+                                <input type="number" class="form-control" id="harga" placeholder="285000" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Stok *</label>
+                                <input type="number" class="form-control" id="stok" value="0" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Deskripsi</label>
+                            <textarea class="form-control" id="deskripsi" rows="2" placeholder="Deskripsi produk..."></textarea>
+                        </div>
+                    </form>
+                    
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <strong>Catatan:</strong> Fitur tambah data via form masih dalam pengembangan. 
+                        Untuk saat ini, silakan tambah data langsung ke database.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Batal
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="savePart()">
+                        <i class="bi bi-save"></i> Simpan Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Part -->
+    <div class="modal fade" id="detailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-info-circle"></i> Detail Spare Part
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="detailContent">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-3 text-muted">Memuat data...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        // ========== Auto Refresh ==========
+        let autoRefreshTimer = setTimeout(() => {
+            console.log('Auto refreshing dashboard...');
+            location.reload();
+        }, 30000); // 30 seconds
+
+        // ========== Charts Configuration ==========
+        
+        // Verification Chart (Line)
+        const verificationCtx = document.getElementById('verificationChart');
+        if (verificationCtx) {
+            new Chart(verificationCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
+                    datasets: [{
+                        label: 'Verifikasi',
+                        data: [12, 19, 15, 25, 22, 18, {{ total_verifikasi or 10 }}],
+                        borderColor: 'rgb(220, 53, 69)',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        pointBackgroundColor: 'rgb(220, 53, 69)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: 'rgb(220, 53, 69)',
+                            borderWidth: 2
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Status Chart (Doughnut)
+        const statusCtx = document.getElementById('statusChart');
+        if (statusCtx) {
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Produk Asli', 'Tidak Valid'],
+                    datasets: [{
+                        data: [{{ total_verifikasi or 15 }}, 5],
+                        backgroundColor: [
+                            'rgb(40, 167, 69)',
+                            'rgb(220, 53, 69)'
+                        ],
+                        borderWidth: 3,
+                        borderColor: '#fff',
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 13
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleColor: '#fff',
+                            bodyColor: '#fff'
+                        }
+                    }
+                }
+            });
+        }
+
+        // ========== Functions ==========
+        
+        function refreshData(evt) {
+            console.log('Refreshing data manually...');
+            clearTimeout(autoRefreshTimer);
+            
+            // Show loading indicator bila dipicu lewat tombol
+            const btn = evt?.currentTarget || evt?.target;
+            let originalHTML = null;
+            if (btn && btn.matches('button')) {
+                originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Refreshing...';
+                btn.disabled = true;
+            }
+            
+            setTimeout(() => {
+                if (btn && originalHTML !== null) {
+                    btn.innerHTML = originalHTML;
+                }
+                location.reload();
+            }, 500);
+        }
+
+        function exportData() {
+            console.log('Export data clicked');
+            
+            const confirmExport = confirm(
+                '📊 Export Data\n\n' +
+                'Fitur export sedang dalam pengembangan.\n\n' +
+                'Untuk saat ini, Anda dapat:\n' +
+                '1. Export langsung dari database SQLite\n' +
+                '2. Gunakan SQLite browser untuk export ke CSV\n' +
+                '3. Hubungi developer untuk fitur custom export\n\n' +
+                'Apakah Anda ingin melanjutkan ke dokumentasi?'
+            );
+            
+            if (confirmExport) {
+                window.open('https://www.sqlitetutorial.net/sqlite-export-csv/', '_blank');
+            }
+        }
+
+        function viewDetail(kodePart) {
+            console.log('Viewing detail for:', kodePart);
+            
+            const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+            const detailContent = document.getElementById('detailContent');
+            
+            // Show loading
+            detailContent.innerHTML = `
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Memuat detail produk...</p>
+                </div>
+            `;
+            
+            modal.show();
+
+            // Fetch detail from API
+            fetch(`/api/check-part/${kodePart}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists && data.part) {
+                        const part = data.part;
+                        detailContent.innerHTML = `
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <div class="alert alert-success">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <strong>Produk Terverifikasi</strong> - Data ditemukan di database
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Kode Part</label>
+                                    <div class="fw-bold">${part.kode_part}</div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Nama Part</label>
+                                    <div class="fw-bold">${part.nama_part}</div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Model Motor</label>
+                                    <div class="fw-bold">${part.model_motor}</div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Harga</label>
+                                    <div class="fw-bold text-success">Rp ${part.harga.toLocaleString('id-ID')}</div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Stok</label>
+                                    <div class="fw-bold">
+                                        ${part.stok > 10 ? 
+                                            `<span class="badge bg-success">${part.stok} unit</span>` : 
+                                            part.stok > 0 ? 
+                                            `<span class="badge bg-warning text-dark">${part.stok} unit</span>` :
+                                            `<span class="badge bg-danger">Habis</span>`
+                                        }
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">QR Code</label>
+                                    <div class="fw-bold"><code>${part.qr_code}</code></div>
+                                </div>
+                                
+                                <div class="col-12 mb-3">
+                                    <label class="form-label text-muted">Hologram Code</label>
+                                    <div class="fw-bold"><code>${part.hologram_code}</code></div>
+                                </div>
+                                
+                                <div class="col-12 mb-3">
+                                    <label class="form-label text-muted">Deskripsi</label>
+                                    <div>${part.deskripsi || '-'}</div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Tanggal Produksi</label>
+                                    <div class="fw-bold">${part.tanggal_produksi}</div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Tanggal Input</label>
+                                    <div class="fw-bold">${part.created_at}</div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        detailContent.innerHTML = `
+                            <div class="alert alert-danger">
+                                <i class="bi bi-x-circle-fill"></i>
+                                <strong>Data Tidak Ditemukan</strong>
+                                <p class="mb-0 mt-2">Kode part <code>${kodePart}</code> tidak ada dalam database.</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching detail:', error);
+                    detailContent.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <strong>Error</strong>
+                            <p class="mb-0 mt-2">Terjadi kesalahan saat memuat data. Silakan coba lagi.</p>
+                        </div>
+                    `;
+                });
+        }
+
+        function savePart() {
+            console.log('Save part clicked');
+            
+            const form = document.getElementById('addPartForm');
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            alert(
+                '⚠️ Fitur Dalam Pengembangan\n\n' +
+                'Fitur tambah data via form masih dalam pengembangan.\n\n' +
+                'Untuk menambah data spare part:\n' +
+                '1. Akses database SQLite langsung\n' +
+                '2. Gunakan SQLite browser/editor\n' +
+                '3. Atau hubungi developer untuk bantuan\n\n' +
+                'Terima kasih atas pengertiannya!'
+            );
+        }
+
+        // ========== Page Load Actions ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard loaded successfully');
+            console.log('Total parts:', {{ total_parts }});
+            console.log('Auto refresh in 30 seconds');
+            
+            // Add animation to stats cards
+            const statsCards = document.querySelectorAll('.stats-card');
+            statsCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'all 0.5s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 50);
+                }, index * 100);
+            });
+        });
+
+        // ========== Keyboard Shortcuts ==========
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + R = Refresh
+            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                e.preventDefault();
+                refreshData();
+            }
+            
+            // Ctrl/Cmd + E = Export
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                e.preventDefault();
+                exportData();
+            }
+        });
+
+        // ========== Console Info ==========
+        console.log('%c🚗 Honda Verification System', 'color: #dc3545; font-size: 20px; font-weight: bold;');
+        console.log('%cDashboard Admin v2.0.0', 'color: #666; font-size: 12px;');
+        console.log('%c⌨️  Keyboard Shortcuts:', 'color: #0dcaf0; font-weight: bold;');
+        console.log('  Ctrl/Cmd + R  →  Refresh Data');
+        console.log('  Ctrl/Cmd + E  →  Export Data');
+    </script>
+</body>
+</html>
