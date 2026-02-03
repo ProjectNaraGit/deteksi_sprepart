@@ -461,12 +461,6 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#" onclick="exportData()">
-                    <i class="bi bi-download"></i>
-                    <span>Export Data</span>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="/logout">
                     <i class="bi bi-box-arrow-right"></i>
                     <span>Logout</span>
@@ -585,9 +579,6 @@
                                 <button class="btn btn-outline-info" onclick="refreshData(event)" data-refresh-btn>
                                     <i class="bi bi-arrow-clockwise"></i> Refresh Data
                                 </button>
-                                <button class="btn btn-outline-warning" onclick="exportData()">
-                                    <i class="bi bi-download"></i> Export CSV
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -635,6 +626,7 @@
                             <span class="badge bg-white text-danger">{{ total_parts }} Total</span>
                         </div>
                         <div class="card-body p-0">
+                            <div id="sparepartAlert" class="alert d-none m-3" role="alert"></div>
                             <div class="table-responsive">
                                 <table class="table table-hover mb-0">
                                     <thead>
@@ -662,8 +654,12 @@
                                                 {% endif %}
                                             </td>
                                             <td>
-                                                <button class="btn btn-sm btn-outline-primary" onclick="viewDetail('{{ part.kode_part }}')">
-                                                    <i class="bi bi-eye"></i>
+                                                <button class="btn btn-sm btn-outline-danger"
+                                                    data-delete-part-btn
+                                                    data-part-id="{{ part.id }}"
+                                                    data-part-name="{{ part.nama_part }}"
+                                                    onclick="confirmDeletePart(this)">
+                                                    <i class="bi bi-trash"></i>
                                                 </button>
                                             </td>
                                         </tr>
@@ -747,16 +743,9 @@
                                 <label class="form-label">Kategori *</label>
                                 <select class="form-select" id="kategori" required>
                                     <option value="">Pilih Kategori</option>
-                                    <option value="1">Mesin</option>
-                                    <option value="2">Body</option>
-                                    <option value="3">Kelistrikan</option>
-                                    <option value="4">Rem</option>
-                                    <option value="5">Oli & Pelumas</option>
-                                    <option value="6">Filter</option>
-                                    <option value="7">Transmisi</option>
-                                    <option value="8">Suspensi</option>
-                                    <option value="9">Ban & Velg</option>
-                                    <option value="10">Aksesoris</option>
+                                    {% for kategori in categories %}
+                                    <option value="{{ kategori.id }}">{{ kategori.nama_kategori }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
@@ -785,12 +774,13 @@
                         <strong>Catatan:</strong> Fitur tambah data via form masih dalam pengembangan. 
                         Untuk saat ini, silakan tambah data langsung ke database.
                     </div>
+                    <div id="addPartAlert" class="alert d-none mt-3" role="alert"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x-circle"></i> Batal
                     </button>
-                    <button type="button" class="btn btn-danger" onclick="savePart()">
+                    <button type="button" class="btn btn-danger" onclick="savePart()" data-save-part-btn>
                         <i class="bi bi-save"></i> Simpan Data
                     </button>
                 </div>
@@ -831,6 +821,10 @@
         }, 30000); // 30 seconds
 
         // ========== Charts Configuration ==========
+        const DASHBOARD_STATS = {
+            totalVerifikasi: Number('{{ total_verifikasi | default(0, true) }}'),
+            totalParts: Number('{{ total_parts | default(0, true) }}')
+        };
         
         // Verification Chart (Line)
         const verificationCtx = document.getElementById('verificationChart');
@@ -841,7 +835,7 @@
                     labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
                     datasets: [{
                         label: 'Verifikasi',
-                        data: [12, 19, 15, 25, 22, 18, {{ total_verifikasi or 10 }}],
+                        data: [12, 19, 15, 25, 22, 18, DASHBOARD_STATS.totalVerifikasi || 10],
                         borderColor: 'rgb(220, 53, 69)',
                         backgroundColor: 'rgba(220, 53, 69, 0.1)',
                         tension: 0.4,
@@ -889,7 +883,7 @@
                 data: {
                     labels: ['Produk Asli', 'Tidak Valid'],
                     datasets: [{
-                        data: [{{ total_verifikasi or 15 }}, 5],
+                        data: [DASHBOARD_STATS.totalVerifikasi || 15, 5],
                         backgroundColor: [
                             'rgb(40, 167, 69)',
                             'rgb(220, 53, 69)'
@@ -1077,32 +1071,148 @@
                 });
         }
 
-        function savePart() {
-            console.log('Save part clicked');
-            
+        const addPartAlertEl = document.getElementById('addPartAlert');
+        const sparepartAlertEl = document.getElementById('sparepartAlert');
+        const savePartBtn = document.querySelector('[data-save-part-btn]');
+
+        function showAddPartAlert(type, message) {
+            if (!addPartAlertEl) return;
+            addPartAlertEl.className = `alert alert-${type}`;
+            addPartAlertEl.textContent = message;
+            addPartAlertEl.classList.remove('d-none');
+        }
+
+        function hideAddPartAlert() {
+            if (!addPartAlertEl) return;
+            addPartAlertEl.classList.add('d-none');
+        }
+
+        function showSparepartAlert(type, message) {
+            if (!sparepartAlertEl) return;
+            sparepartAlertEl.className = `alert alert-${type} m-3`;
+            sparepartAlertEl.textContent = message;
+            sparepartAlertEl.classList.remove('d-none');
+        }
+
+        function hideSparepartAlert() {
+            if (!sparepartAlertEl) return;
+            sparepartAlertEl.classList.add('d-none');
+        }
+
+        async function savePart() {
             const form = document.getElementById('addPartForm');
-            
             if (!form.checkValidity()) {
                 form.reportValidity();
+
                 return;
             }
-            
-            alert(
-                '⚠️ Fitur Dalam Pengembangan\n\n' +
-                'Fitur tambah data via form masih dalam pengembangan.\n\n' +
-                'Untuk menambah data spare part:\n' +
-                '1. Akses database SQLite langsung\n' +
-                '2. Gunakan SQLite browser/editor\n' +
-                '3. Atau hubungi developer untuk bantuan\n\n' +
-                'Terima kasih atas pengertiannya!'
-            );
+
+            hideAddPartAlert();
+
+            const payload = {
+                kode_part: document.getElementById('kode_part').value.trim().toUpperCase(),
+                nama_part: document.getElementById('nama_part').value.trim(),
+                kategori_id: document.getElementById('kategori').value,
+                model_motor: document.getElementById('model_motor').value.trim(),
+                harga: Number(document.getElementById('harga').value),
+                stok: Number(document.getElementById('stok').value),
+                deskripsi: document.getElementById('deskripsi').value.trim(),
+            };
+
+            if (!payload.kategori_id) {
+                showAddPartAlert('warning', 'Silakan pilih kategori.');
+                return;
+            }
+
+            savePartBtn.disabled = true;
+            const originalHtml = savePartBtn.innerHTML;
+            savePartBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Menyimpan...';
+
+            try {
+                const response = await fetch('/dashboard/api/spareparts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+                const result = await response.json();
+
+                if (!response.ok || result.status !== 'success') {
+                    throw new Error(result.message || 'Gagal menambahkan sparepart');
+                }
+
+                showAddPartAlert('success', result.message || 'Sparepart berhasil ditambahkan');
+                form.reset();
+
+                setTimeout(() => {
+                    const modalEl = document.getElementById('addPartModal');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    modal?.hide();
+                    location.reload();
+                }, 1000);
+            } catch (error) {
+                console.error(error);
+                showAddPartAlert('danger', error.message || 'Terjadi kesalahan saat menyimpan data');
+            } finally {
+                savePartBtn.disabled = false;
+                savePartBtn.innerHTML = originalHtml;
+            }
+        }
+
+        async function confirmDeletePart(partId, partName, triggerBtn) {
+            hideSparepartAlert();
+            const warning = `⚠️ Hapus Sparepart\n\nAnda akan menghapus "${partName}". ` +
+                'Tindakan ini permanen dan tidak dapat dibatalkan.\n\nLanjutkan?';
+
+            if (!confirm(warning)) {
+                showSparepartAlert('info', 'Penghapusan dibatalkan oleh admin.');
+                return;
+            }
+
+            await deletePart(partId, partName, triggerBtn);
+        }
+
+        async function deletePart(partId, partName, triggerBtn) {
+            if (!partId) {
+                showSparepartAlert('danger', 'ID sparepart tidak valid.');
+                return;
+            }
+
+            const originalHTML = triggerBtn?.innerHTML;
+            if (triggerBtn) {
+                triggerBtn.disabled = true;
+                triggerBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+            }
+
+            showSparepartAlert('warning', `Menghapus "${partName}"...`);
+
+            try {
+                const response = await fetch(`/dashboard/api/spareparts/${partId}`, {
+                    method: 'DELETE',
+                });
+                const result = await response.json();
+
+                if (!response.ok || result.status !== 'success') {
+                    throw new Error(result.message || 'Gagal menghapus sparepart');
+                }
+
+                showSparepartAlert('success', result.message || `Sparepart "${partName}" berhasil dihapus.`);
+                setTimeout(() => location.reload(), 900);
+            } catch (error) {
+                console.error(error);
+                showSparepartAlert('danger', error.message || 'Terjadi kesalahan ketika menghapus data.');
+                if (triggerBtn) {
+                    triggerBtn.disabled = false;
+                    triggerBtn.innerHTML = originalHTML;
+                }
+            }
         }
 
         // ========== Page Load Actions ==========
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Dashboard loaded successfully');
-            console.log('Total parts:', {{ total_parts }});
+            console.log('Total parts:', DASHBOARD_STATS.totalParts);
             console.log('Auto refresh in 30 seconds');
+
             
             // Add animation to stats cards
             const statsCards = document.querySelectorAll('.stats-card');

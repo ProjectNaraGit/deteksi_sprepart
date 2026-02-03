@@ -457,7 +457,7 @@
                 setTimeout(() => {
                     loadingOverlay.style.display = 'none';
                     displayResult(data);
-                }, 1500);
+                }, 1000);
                 
             } catch (error) {
                 loadingOverlay.style.display = 'none';
@@ -465,112 +465,151 @@
             }
         });
         
+        const currencyFormatter = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            maximumFractionDigits: 0
+        });
+
+        function formatCurrency(value) {
+            if (value === null || value === undefined || Number.isNaN(Number(value))) {
+                return '-';
+            }
+            return currencyFormatter.format(Number(value));
+        }
+
+        function renderNotes(notes = [], isAuthentic = true) {
+            if (!notes.length) {
+                return '<li>Tidak ada catatan tambahan.</li>';
+            }
+            return notes.map(note => `<li>${note}</li>`).join('');
+        }
+
+        function renderQrCodes(codes = []) {
+            if (!codes.length) return '<span class="text-muted">Tidak ada QR/Barcode yang berhasil dibaca.</span>';
+            return codes.map(code => `<span class="badge bg-primary me-2 mb-2">${code}</span>`).join('');
+        }
+
         // Display result
         function displayResult(data) {
-            const isAuthentic = data.authentic;
-            const confidence = data.confidence;
-            const imageDetection = data.image_detection;
-            const dbMatch = data.database_match;
-            
-            let html = '';
-            
-            if (isAuthentic) {
-                html = `
-                    <div class="result-authentic">
-                        <div class="text-center">
-                            <i class="fas fa-check-circle result-icon" style="color: #28a745;"></i>
-                            <h3 style="color: #28a745;">✓ SPARE PART ASLI</h3>
-                            <p class="mb-0">Produk ini terdaftar di database Honda dan terverifikasi asli</p>
+            const isAuthentic = Boolean(data?.authentic);
+            const confidence = Number(data?.confidence) || 0;
+            const confidencePercent = Math.round(confidence * 100);
+            const notes = Array.isArray(data?.notes) ? data.notes : [];
+            const dbMatch = data?.database_match || null;
+            const qrCodes = Array.isArray(data?.qr_codes) ? data.qr_codes : [];
+            const cnnInfo = data?.cnn || {};
+            const cnnConfidenceRaw = typeof cnnInfo.confidence === 'number' ? cnnInfo.confidence : confidence;
+            const cnnConfidencePercent = Math.round((cnnConfidenceRaw || 0) * 100);
+
+            const confidenceClass = isAuthentic ? 'confidence-high' : 'confidence-low';
+            const wrapperClass = isAuthentic ? 'result-authentic' : 'result-fake';
+            const iconClass = isAuthentic ? 'fa-check-circle' : 'fa-times-circle';
+            const titleText = isAuthentic ? '✓ SPARE PART ASLI' : '✗ SPARE PART TIDAK VALID';
+            const titleColor = isAuthentic ? '#28a745' : '#dc3545';
+            const message = data?.message || (isAuthentic
+                ? 'Produk ini terdaftar di database Honda dan terverifikasi asli'
+                : 'Produk ini tidak dapat diverifikasi atau kemungkinan PALSU!');
+
+            let html = `
+                <div class="${wrapperClass}">
+                    <div class="text-center">
+                        <i class="fas ${iconClass} result-icon" style="color: ${titleColor};"></i>
+                        <h3 style="color: ${titleColor};">${titleText}</h3>
+                        <p class="mb-0">${message}</p>
+                    </div>
+
+                    <div class="confidence-bar">
+                        <div class="confidence-fill ${confidenceClass}" style="width: ${confidencePercent}%">
+                            Tingkat Keyakinan: ${confidencePercent}%
                         </div>
-                        
-                        <div class="confidence-bar">
-                            <div class="confidence-fill confidence-high" style="width: ${confidence}%">
-                                Tingkat Keyakinan: ${confidence}%
-                            </div>
-                        </div>
-                        
-                        <h5 class="mt-4"><i class="fas fa-robot"></i> Hasil Analisis AI:</h5>
-                        <ul class="features-list">
-                            ${imageDetection.features.map(f => `<li>${f}</li>`).join('')}
+                    </div>
+
+                    <div class="mt-3">
+                        <h5><i class="fas fa-robot"></i> Catatan Analisis AI:</h5>
+                        <ul class="features-list ${isAuthentic ? '' : 'fake'}">
+                            ${renderNotes(notes, isAuthentic)}
                         </ul>
-                `;
-                
-                if (dbMatch) {
-                    html += `
-                        <h5 class="mt-4"><i class="fas fa-database"></i> Informasi Produk:</h5>
+                    </div>
+
+                    <div class="mt-3">
+                        <h5><i class="fas fa-qrcode"></i> QR / Barcode yang Terdeteksi:</h5>
+                        <div>${renderQrCodes(qrCodes)}</div>
+                    </div>
+
+                    <div class="mt-3">
+                        <h5><i class="fas fa-microscope"></i> Detail CNN:</h5>
+                        <table class="table detail-table">
+                            <tr>
+                                <td>Prediksi:</td>
+                                <td><strong>${cnnInfo.label || '-'} (${cnnConfidencePercent}%)</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Bounding Box:</td>
+                                <td>${cnnInfo.bbox ? cnnInfo.bbox.join(', ') : '-'}</td>
+                            </tr>
+                        </table>
+                    </div>
+            `;
+
+            if (dbMatch) {
+                html += `
+                    <div class="mt-4">
+                        <h5><i class="fas fa-database"></i> Informasi Produk:</h5>
                         <table class="table detail-table">
                             <tr>
                                 <td>Kode Part:</td>
-                                <td><strong>${dbMatch.kode_part}</strong></td>
+                                <td><strong>${dbMatch.kode_part || '-'}</strong></td>
                             </tr>
                             <tr>
                                 <td>Nama Part:</td>
-                                <td>${dbMatch.nama_part}</td>
+                                <td>${dbMatch.nama_part || '-'}</td>
                             </tr>
                             <tr>
                                 <td>Kategori:</td>
-                                <td>${dbMatch.kategori}</td>
+                                <td>${dbMatch.kategori || '-'}</td>
                             </tr>
                             <tr>
                                 <td>Model Motor:</td>
-                                <td>${dbMatch.model_motor}</td>
+                                <td>${dbMatch.model_motor || '-'}</td>
                             </tr>
                             <tr>
                                 <td>Harga:</td>
-                                <td><strong>${dbMatch.harga}</strong></td>
+                                <td><strong>${formatCurrency(dbMatch.harga)}</strong></td>
                             </tr>
                             <tr>
                                 <td>Stok:</td>
-                                <td>${dbMatch.stok} unit</td>
+                                <td>${dbMatch.stok ?? '-'} unit</td>
                             </tr>
                             <tr>
                                 <td>QR Code:</td>
-                                <td>${dbMatch.qr_code}</td>
+                                <td>${dbMatch.qr_code || '-'}</td>
                             </tr>
                             <tr>
                                 <td>Hologram Code:</td>
-                                <td>${dbMatch.hologram_code}</td>
+                                <td>${dbMatch.hologram_code || '-'}</td>
                             </tr>
                         </table>
-                    `;
-                }
-                
-                html += '</div>';
-                
-            } else {
-                html = `
-                    <div class="result-fake">
-                        <div class="text-center">
-                            <i class="fas fa-times-circle result-icon" style="color: #dc3545;"></i>
-                            <h3 style="color: #dc3545;">✗ SPARE PART TIDAK VALID</h3>
-                            <p class="mb-0">Produk ini tidak dapat diverifikasi atau kemungkinan PALSU!</p>
-                        </div>
-                        
-                        <div class="confidence-bar">
-                            <div class="confidence-fill confidence-low" style="width: ${confidence}%">
-                                Tingkat Keyakinan: ${confidence}%
-                            </div>
-                        </div>
-                        
-                        <h5 class="mt-4"><i class="fas fa-robot"></i> Hasil Analisis AI:</h5>
-                        <ul class="features-list fake">
-                            ${imageDetection.features.map(f => `<li>${f}</li>`).join('')}
-                        </ul>
-                        
-                        <div class="alert alert-danger mt-4">
-                            <strong><i class="fas fa-exclamation-triangle"></i> Peringatan!</strong>
-                            <p class="mb-0">Produk ini tidak terdaftar dalam database resmi Honda atau memiliki ciri-ciri produk palsu. 
-                            Kami sangat menyarankan untuk tidak membeli atau menggunakan produk ini. 
-                            Hubungi dealer resmi Honda untuk mendapatkan spare part yang asli dan berkualitas.</p>
-                        </div>
                     </div>
                 `;
             }
-            
+
+            if (!isAuthentic) {
+                html += `
+                    <div class="alert alert-danger mt-4">
+                        <strong><i class="fas fa-exclamation-triangle"></i> Peringatan!</strong>
+                        <p class="mb-0">Produk ini tidak terdaftar dalam database resmi Honda atau memiliki ciri-ciri produk palsu. 
+                        Kami sangat menyarankan untuk tidak membeli atau menggunakan produk ini. 
+                        Hubungi dealer resmi Honda untuk mendapatkan spare part yang asli dan berkualitas.</p>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+
             resultContainer.innerHTML = html;
             resultContainer.style.display = 'block';
-            
-            // Smooth scroll to result
+
             resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
     </script>

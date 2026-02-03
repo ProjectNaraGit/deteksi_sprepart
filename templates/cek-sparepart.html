@@ -189,8 +189,8 @@
                             <p>Belum ada riwayat verifikasi</p>
                         </div>
                     </div>
-                    <button onclick="clearHistory()" class="btn btn-outline-danger w-100 mt-3">
-                        <i class="bi bi-trash"></i> Hapus Semua Riwayat
+                    <button onclick="loadHistory(true)" class="btn btn-outline-danger w-100 mt-3">
+                        <i class="bi bi-arrow-clockwise"></i> Muat Ulang Riwayat
                     </button>
                 </div>
             </div>
@@ -276,6 +276,13 @@
                 return;
             }
 
+            const isUrl = /^https?:\/\//i.test(kodePart);
+            if (isUrl) {
+                showToast('info', 'Mengarahkan ke tautan dari QR code...');
+                window.location.href = kodePart;
+                return;
+            }
+
             try {
                 const response = await fetch('/api/verify', {
                     method: 'POST',
@@ -287,7 +294,7 @@
                 currentResult = result;
                 
                 showResult(result);
-                saveToHistory(result);
+                loadHistory();
             } catch (error) {
                 showToast('danger', 'Gagal verifikasi. Coba lagi!');
             }
@@ -345,7 +352,7 @@
                 resultBox.classList.add('authentic');
                 resultIcon.className = 'bi bi-check-circle-fill text-success';
                 resultIcon.style.fontSize = '4rem';
-                resultTitle.textContent = 'SPARE PART ASLI ✓';
+                resultTitle.textContent = 'SPARE PART ASLI ';
                 resultTitle.className = 'text-success';
                 resultMessage.textContent = data.message;
 
@@ -379,7 +386,7 @@
                 resultBox.classList.add('fake');
                 resultIcon.className = 'bi bi-x-circle-fill text-danger';
                 resultIcon.style.fontSize = '4rem';
-                resultTitle.textContent = 'SPARE PART TIDAK DITEMUKAN ✗';
+                resultTitle.textContent = 'SPARE PART TIDAK DITEMUKAN ';
                 resultTitle.className = 'text-danger';
                 resultMessage.textContent = data.message;
                 resultDetails.innerHTML = '';
@@ -391,73 +398,63 @@
         }
 
         // History Functions
-        function saveToHistory(data) {
-            let history = JSON.parse(localStorage.getItem('verification_history') || '[]');
-            
-            history.unshift({
-                kode_part: data.data ? data.data.kode_part : 'Unknown',
-                nama_part: data.data ? data.data.nama_part : 'Tidak ditemukan',
-                status: data.authentic ? 'ASLI' : 'TIDAK VALID',
-                timestamp: new Date().toISOString(),
-                data: data.data
-            });
-            
-            // Keep only last 20
-            history = history.slice(0, 20);
-            localStorage.setItem('verification_history', JSON.stringify(history));
-        }
-
-        function loadHistory() {
-            const history = JSON.parse(localStorage.getItem('verification_history') || '[]');
+        async function loadHistory(showToastMessage = false) {
             const container = document.getElementById('history-container');
-            
-            if (history.length === 0) {
+            container.innerHTML = `
+                <div class="text-center text-muted">
+                    <div class="spinner-border text-danger" role="status"></div>
+                    <p class="mt-3">Memuat riwayat...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('/api/verification-history?method=QR&limit=10');
+                const payload = await response.json();
+
+                if (payload.status !== 'success') {
+                    throw new Error(payload.message || 'Gagal memuat riwayat');
+                }
+
+                const history = payload.history || [];
+
+                if (history.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center text-muted">
+                            <i class="bi bi-clock-history" style="font-size: 3rem;"></i>
+                            <p>Belum ada riwayat verifikasi</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = history.map(item => `
+                    <div class="history-item">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${item.kode_part || 'UNKNOWN'}</strong>
+                                <br>
+                                <small class="text-muted">Status: ${item.status || '-'}</small>
+                            </div>
+                            <span class="badge ${item.status === 'ASLI' ? 'bg-success' : 'bg-danger'}">
+                                ${item.status || 'N/A'}
+                            </span>
+                        </div>
+                        <small class="text-muted">
+                            <i class="bi bi-clock"></i> ${item.waktu_cek || '-'}
+                        </small>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error(error);
                 container.innerHTML = `
                     <div class="text-center text-muted">
-                        <i class="bi bi-clock-history" style="font-size: 3rem;"></i>
-                        <p>Belum ada riwayat verifikasi</p>
+                        <i class="bi bi-exclamation-triangle" style="font-size: 3rem;"></i>
+                        <p>Gagal memuat riwayat. Coba lagi.</p>
                     </div>
                 `;
-                return;
-            }
-
-            container.innerHTML = history.map((item, index) => `
-                <div class="history-item" onclick='useHistoryItem(${JSON.stringify(item)})'>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>${item.kode_part}</strong>
-                            <br>
-                            <small class="text-muted">${item.nama_part}</small>
-                        </div>
-                        <span class="badge ${item.status === 'ASLI' ? 'bg-success' : 'bg-danger'}">
-                            ${item.status}
-                        </span>
-                    </div>
-                    <small class="text-muted">
-                        <i class="bi bi-clock"></i> ${formatDate(item.timestamp)}
-                    </small>
-                </div>
-            `).join('');
-        }
-
-        function useHistoryItem(item) {
-            document.getElementById('kodePartInput').value = item.kode_part;
-            document.querySelector('[data-bs-target="#input-tab"]').click();
-            
-            if (item.data) {
-                showResult({
-                    authentic: item.status === 'ASLI',
-                    message: item.status === 'ASLI' ? 'Spare part ASLI' : 'Tidak ditemukan',
-                    data: item.data
-                });
-            }
-        }
-
-        function clearHistory() {
-            if (confirm('Yakin ingin menghapus semua riwayat?')) {
-                localStorage.removeItem('verification_history');
-                loadHistory();
-                showToast('success', 'Riwayat berhasil dihapus');
+                if (showToastMessage) {
+                    showToast('danger', 'Gagal memuat riwayat dari server');
+                }
             }
         }
 
@@ -465,7 +462,7 @@
         function shareWhatsApp() {
             if (!currentResult || !currentResult.data) return;
             
-            const text = `✅ Spare part ${currentResult.data.kode_part} adalah ASLI!\n\n` +
+            const text = ` Spare part ${currentResult.data.kode_part} adalah ASLI!\n\n` +
                         `${currentResult.data.nama_part}\n` +
                         `${currentResult.data.model_motor}\n\n` +
                         `Verified by Honda Genuine Parts System`;
